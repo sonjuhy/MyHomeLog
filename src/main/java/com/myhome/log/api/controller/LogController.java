@@ -1,5 +1,6 @@
 package com.myhome.log.api.controller;
 
+import com.myhome.log.api.dto.LogReceiveDto;
 import com.myhome.log.api.service.KafkaProducerImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,4 +18,11 @@ public class LogController {
     public void test(){
         producer.sendMessage("test message");
     }
+
+    @GetMapping("/dtoTest")
+    public void testDto(){
+        LogReceiveDto dto = new LogReceiveDto(0,true,"spring","cloud","content");
+        producer.sendDtoMessage(dto);
+    }
+
 }
