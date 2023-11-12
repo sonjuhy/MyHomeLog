@@ -8,5 +8,6 @@ public interface KafkaConsumer {
     void consumeLight(ConsumerRecord<String, LogReceiveDto> consumerRecord) throws Exception;
     void consumeReserve(ConsumerRecord<String, LogReceiveDto> consumerRecord) throws Exception;
     void consumeCloud(ConsumerRecord<String, LogReceiveDto> consumerRecord) throws Exception;
+    void consumeWeather(ConsumerRecord<String, LogReceiveDto> consumerRecord) throws Exception;
     void consumeFileCheck(ConsumerRecord<String, LogReceiveDto> consumerRecord) throws Exception;
 }
