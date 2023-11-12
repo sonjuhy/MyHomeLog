@@ -17,14 +17,14 @@ import java.util.Date;
 @Service
 public class KafkaConsumerImpl implements KafkaConsumer{
 
-    private final String FILE_CHECK= "cloud-check";
-    private final String CLOUD= "cloud-topic";
-    private final String LIGHT= "iot-topic";
-    private final String RESERVE = "reserve-topic";
+    private final String FILE_CHECK= "cloud-check-log";
+    private final String CLOUD= "cloud-log-topic";
+    private final String LIGHT= "iot-log-topic";
+    private final String RESERVE = "reserve-log-topic";
+    private final String WEATHER = "weather-log-topic";
     private final String TEST = "exam-topic";
 
     private final String SPRING_GROUP = "spring-group";
-    private final String DJANGO_GROUP = "django-kafka";
 
     @Autowired
     LogDefaultService service;
@@ -46,6 +46,13 @@ public class KafkaConsumerImpl implements KafkaConsumer{
     @KafkaListener(topics = CLOUD, groupId = SPRING_GROUP)
     @Override
     public void consumeCloud(ConsumerRecord<String, LogReceiveDto> consumerRecord) throws Exception {
+        LogDefaultDto dto = toLogDefaultDto(consumerRecord.value(), consumerRecord.timestamp());
+        service.insert(dto);
+    }
+
+    @KafkaListener(topics = WEATHER, groupId = SPRING_GROUP)
+    @Override
+    public void consumeWeather(ConsumerRecord<String, LogReceiveDto> consumerRecord) throws Exception {
         LogDefaultDto dto = toLogDefaultDto(consumerRecord.value(), consumerRecord.timestamp());
         service.insert(dto);
     }
