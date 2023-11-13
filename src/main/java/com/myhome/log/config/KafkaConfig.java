@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.*;
+import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.support.serializer.JsonSerializer;
 
 import java.util.HashMap;
@@ -68,6 +69,26 @@ public class KafkaConfig {
     public ConcurrentKafkaListenerContainerFactory<String, String> kafkaListenerContainerFactory(){
         ConcurrentKafkaListenerContainerFactory<String, String> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory());
+        return factory;
+    }
+
+    @Bean
+    public ConsumerFactory<String, LogReceiveDto> consumerDtoFactory(){
+        Map<String, Object> configProps = new HashMap<>();
+        configProps.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+        configProps.put(ConsumerConfig.GROUP_ID_CONFIG, defaultGroupId);
+        configProps.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+        configProps.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
+
+        JsonDeserializer<LogReceiveDto> jsonDeserializer = new JsonDeserializer<>(LogReceiveDto.class, false);
+
+        return new DefaultKafkaConsumerFactory<>(configProps, new StringDeserializer(), jsonDeserializer);
+    }
+
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, LogReceiveDto> kafkaListenerContainerDtoFactory(){
+        ConcurrentKafkaListenerContainerFactory<String, LogReceiveDto> factory = new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(consumerDtoFactory());
         return factory;
     }
 }
