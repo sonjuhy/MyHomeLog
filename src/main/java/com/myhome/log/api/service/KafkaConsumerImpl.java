@@ -25,39 +25,40 @@ public class KafkaConsumerImpl implements KafkaConsumer{
     private final String TEST = "exam-topic";
 
     private final String SPRING_GROUP = "spring-group";
+    private final String SPRING_LOG_GROUP = "spring-log-group";
 
     @Autowired
     LogDefaultService service;
 
-    @KafkaListener(topics = LIGHT, groupId = SPRING_GROUP)
+    @KafkaListener(topics = LIGHT, groupId = SPRING_GROUP, containerFactory = "kafkaListenerContainerDtoFactory")
     @Override
     public void consumeLight(ConsumerRecord<String, LogReceiveDto> consumerRecord) throws Exception {
         LogDefaultDto dto = toLogDefaultDto(consumerRecord.value(), consumerRecord.timestamp());
         service.insert(dto);
     }
 
-    @KafkaListener(topics = RESERVE, groupId = SPRING_GROUP)
+    @KafkaListener(topics = RESERVE, groupId = SPRING_GROUP, containerFactory = "kafkaListenerContainerDtoFactory")
     @Override
     public void consumeReserve(ConsumerRecord<String, LogReceiveDto> consumerRecord) throws Exception {
         LogDefaultDto dto = toLogDefaultDto(consumerRecord.value(), consumerRecord.timestamp());
         service.insert(dto);
     }
 
-    @KafkaListener(topics = CLOUD, groupId = SPRING_GROUP)
+    @KafkaListener(topics = CLOUD, groupId = SPRING_GROUP, containerFactory = "kafkaListenerContainerDtoFactory")
     @Override
     public void consumeCloud(ConsumerRecord<String, LogReceiveDto> consumerRecord) throws Exception {
         LogDefaultDto dto = toLogDefaultDto(consumerRecord.value(), consumerRecord.timestamp());
         service.insert(dto);
     }
 
-    @KafkaListener(topics = WEATHER, groupId = SPRING_GROUP)
+    @KafkaListener(topics = WEATHER, groupId = SPRING_GROUP, containerFactory = "kafkaListenerContainerDtoFactory")
     @Override
     public void consumeWeather(ConsumerRecord<String, LogReceiveDto> consumerRecord) throws Exception {
         LogDefaultDto dto = toLogDefaultDto(consumerRecord.value(), consumerRecord.timestamp());
         service.insert(dto);
     }
 
-    @KafkaListener(topics = FILE_CHECK, groupId = SPRING_GROUP)
+    @KafkaListener(topics = FILE_CHECK, groupId = SPRING_GROUP, containerFactory = "kafkaListenerContainerDtoFactory")
     @Override
     public void consumeFileCheck(ConsumerRecord<String, LogReceiveDto> consumerRecord) throws Exception {
         LogDefaultDto dto = toLogDefaultDto(consumerRecord.value(), consumerRecord.timestamp());
@@ -68,14 +69,15 @@ public class KafkaConsumerImpl implements KafkaConsumer{
 //            @TopicPartition(topic = TEST,
 //            partitionOffsets = @PartitionOffset(partition = "0", initialOffset = "0"))}, groupId = SPRING_GROUP)
 //    @KafkaListener(topicPartitions = {@TopicPartition(topic = TEST, partitions = {"0,1"})}, groupId = SPRING_GROUP)
-    @KafkaListener(topics = TEST, groupId = SPRING_GROUP)
+    @KafkaListener(topics = TEST, groupId = SPRING_GROUP, containerFactory = "kafkaListenerContainerDtoFactory")
     public void consumeTest(ConsumerRecord<String, LogReceiveDto> consumerRecord) throws Exception {
         System.out.println("consumeTest : "+ consumerRecord.toString()+", timestamp : " + consumerRecord.timestamp());
         LogReceiveDto dto = consumerRecord.value();
-        System.out.println("value : " + dto);
+//        System.out.println("value : " + dto);
 //        LogDefaultDto dto = msgToDto(consumerRecord.value(), consumerRecord.timestamp());
 //        service.insert(dto);
     }
+
 
     private LogDefaultDto msgToDto(String msg, long unixTime){
         Gson gson = new Gson();
