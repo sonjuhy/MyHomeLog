@@ -1,4 +1,4 @@
-package com.myhome.log.api.service;
+package com.myhome.log.api.service.mongoIdService;
 
 import com.myhome.log.db.entity.DatabaseSequence;
 import lombok.RequiredArgsConstructor;
