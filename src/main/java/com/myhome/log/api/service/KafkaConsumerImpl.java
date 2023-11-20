@@ -3,6 +3,7 @@ package com.myhome.log.api.service;
 import com.google.gson.Gson;
 import com.myhome.log.api.dto.LogDefaultDto;
 import com.myhome.log.api.dto.LogReceiveDto;
+import com.myhome.log.db.entity.LogCloudCheckEntity;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,7 @@ public class KafkaConsumerImpl implements KafkaConsumer{
 
     @Autowired
     LogDefaultService service;
+
 
     @KafkaListener(topics = LIGHT, groupId = SPRING_GROUP, containerFactory = "kafkaListenerContainerDtoFactory")
     @Override
@@ -95,13 +97,14 @@ public class KafkaConsumerImpl implements KafkaConsumer{
         LogDefaultDto dto = new LogDefaultDto();
         dto.receiveToDefault(receiveDto);
 
+        dto.setUnixTime(unixTime);
         dto.setDay(unixTimeToUTCDate(unixTime));
         dto.setTime(unixTimeToUTCTime(unixTime));
 
         return dto;
     }
     private String unixTimeToUTCDate(long unixTime){
-        Date date = new Date(unixTime);
+        Date date = new Date(unixTime*1000L);
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
         int year = cal.get(Calendar.YEAR);
@@ -111,7 +114,7 @@ public class KafkaConsumerImpl implements KafkaConsumer{
         return year+"-"+month+"-"+day;
     }
     private String unixTimeToUTCTime(long unixTime){
-        Date date = new Date(unixTime);
+        Date date = new Date(unixTime*1000L);
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
 

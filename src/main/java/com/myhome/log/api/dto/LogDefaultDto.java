@@ -12,6 +12,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class LogDefaultDto {
     private long id;
+    private long unixTime;
     private boolean type; // error(false), success(true)
     private String sender; // spring, django
     private String service; // light(iot), reserve(iot), cloud, fileCheck(cloud)
@@ -20,7 +21,7 @@ public class LogDefaultDto {
     private String content; // log content
 
     public LogDefaultEntity dtoToEntity(){
-        return new LogDefaultEntity(id, type, sender, service, day, time, content);
+        return new LogDefaultEntity(id, unixTime, type, sender, service, day, time, content);
     }
     public void receiveToDefault(LogReceiveDto dto){
         this.id = dto.getId();
