@@ -12,11 +12,11 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Document(collection = "default_log")
-public class LogDefaultEntity {
+@Document(collection = "reserve_log")
+public class LogReserveEntity {
 
     @Transient
-    public static final  String SEQUENCE_NAME="default_log_sequence";
+    public static final String RESERVE_SEQUENCE_NAME = "reserve_log_sequence";
 
     @Id
     private long id;
