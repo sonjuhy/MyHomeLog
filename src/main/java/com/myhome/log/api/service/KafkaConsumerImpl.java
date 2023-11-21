@@ -8,8 +8,11 @@ import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.annotation.PartitionOffset;
+import org.springframework.kafka.annotation.TopicPartition;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -31,50 +34,67 @@ public class KafkaConsumerImpl implements KafkaConsumer{
     @Autowired
     LogDefaultService service;
 
+    @Autowired
+    LogCloudCheckService cloudCheckService;
 
-    @KafkaListener(topics = LIGHT, groupId = SPRING_GROUP, containerFactory = "kafkaListenerContainerDtoFactory")
+    @Autowired
+    LogCloudService cloudService;
+
+    @Autowired
+    LogIotService iotService;
+
+    @Autowired
+    LogReserveService reserveService;
+
+    @Autowired
+    LogWeatherService weatherService;
+
+
+    @KafkaListener(topics = LIGHT, groupId = SPRING_LOG_GROUP, containerFactory = "kafkaListenerContainerDtoFactory")
     @Override
     public void consumeLight(ConsumerRecord<String, LogReceiveDto> consumerRecord) throws Exception {
         LogDefaultDto dto = toLogDefaultDto(consumerRecord.value(), consumerRecord.timestamp());
-        service.insert(dto);
+        iotService.insert(dto);
     }
 
-    @KafkaListener(topics = RESERVE, groupId = SPRING_GROUP, containerFactory = "kafkaListenerContainerDtoFactory")
+    @KafkaListener(topics = RESERVE, groupId = SPRING_LOG_GROUP, containerFactory = "kafkaListenerContainerDtoFactory")
     @Override
     public void consumeReserve(ConsumerRecord<String, LogReceiveDto> consumerRecord) throws Exception {
         LogDefaultDto dto = toLogDefaultDto(consumerRecord.value(), consumerRecord.timestamp());
-        service.insert(dto);
+        reserveService.insert(dto);
     }
 
-    @KafkaListener(topics = CLOUD, groupId = SPRING_GROUP, containerFactory = "kafkaListenerContainerDtoFactory")
+    @KafkaListener(topics = CLOUD, groupId = SPRING_LOG_GROUP, containerFactory = "kafkaListenerContainerDtoFactory")
     @Override
     public void consumeCloud(ConsumerRecord<String, LogReceiveDto> consumerRecord) throws Exception {
         LogDefaultDto dto = toLogDefaultDto(consumerRecord.value(), consumerRecord.timestamp());
-        service.insert(dto);
+        cloudService.insert(dto);
     }
 
-    @KafkaListener(topics = WEATHER, groupId = SPRING_GROUP, containerFactory = "kafkaListenerContainerDtoFactory")
+    @KafkaListener(topics = WEATHER, groupId = SPRING_LOG_GROUP, containerFactory = "kafkaListenerContainerDtoFactory")
     @Override
     public void consumeWeather(ConsumerRecord<String, LogReceiveDto> consumerRecord) throws Exception {
         LogDefaultDto dto = toLogDefaultDto(consumerRecord.value(), consumerRecord.timestamp());
-        service.insert(dto);
+        weatherService.insert(dto);
     }
 
-    @KafkaListener(topics = FILE_CHECK, groupId = SPRING_GROUP, containerFactory = "kafkaListenerContainerDtoFactory")
+    @KafkaListener(topics = FILE_CHECK, groupId = SPRING_LOG_GROUP, containerFactory = "kafkaListenerContainerDtoFactory")
     @Override
     public void consumeFileCheck(ConsumerRecord<String, LogReceiveDto> consumerRecord) throws Exception {
         LogDefaultDto dto = toLogDefaultDto(consumerRecord.value(), consumerRecord.timestamp());
-        service.insert(dto);
+        cloudCheckService.insert(dto);
     }
 
 //    @KafkaListener(topicPartitions = {
 //            @TopicPartition(topic = TEST,
-//            partitionOffsets = @PartitionOffset(partition = "0", initialOffset = "0"))}, groupId = SPRING_GROUP)
+//            partitionOffsets = @PartitionOffset(partition = "0", initialOffset = "15"))}, groupId = SPRING_LOG_GROUP)
 //    @KafkaListener(topicPartitions = {@TopicPartition(topic = TEST, partitions = {"0,1"})}, groupId = SPRING_GROUP)
-    @KafkaListener(topics = TEST, groupId = SPRING_GROUP, containerFactory = "kafkaListenerContainerDtoFactory")
+//    @KafkaListener(topics = TEST, groupId = SPRING_GROUP, containerFactory = "kafkaListenerContainerDtoFactory")
     public void consumeTest(ConsumerRecord<String, LogReceiveDto> consumerRecord) throws Exception {
-        System.out.println("consumeTest : "+ consumerRecord.toString()+", timestamp : " + consumerRecord.timestamp());
-        LogReceiveDto dto = consumerRecord.value();
+        System.out.println("consumeTest : "+ consumerRecord.toString()+", timestamp : " + consumerRecord.timestamp()+", tmpStamp type : "+consumerRecord.timestampType());
+//        System.out.println("UTC date : " + unixTimeToUTCDate(consumerRecord.timestamp() / 1000L));
+//        System.out.println("UTC time : " + unixTimeToUTCTime(consumerRecord.timestamp() / 1000L));
+//        LogReceiveDto dto = consumerRecord.value();
 //        System.out.println("value : " + dto);
 //        LogDefaultDto dto = msgToDto(consumerRecord.value(), consumerRecord.timestamp());
 //        service.insert(dto);
@@ -104,24 +124,14 @@ public class KafkaConsumerImpl implements KafkaConsumer{
         return dto;
     }
     private String unixTimeToUTCDate(long unixTime){
-        Date date = new Date(unixTime*1000L);
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(date);
-        int year = cal.get(Calendar.YEAR);
-        int month = cal.get(Calendar.MONTH);
-        int day = cal.get(Calendar.DATE);
-
-        return year+"-"+month+"-"+day;
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("YYYY-MM-dd");
+        Date date = new Date(unixTime);
+        return simpleDateFormat.format(date);
     }
     private String unixTimeToUTCTime(long unixTime){
-        Date date = new Date(unixTime*1000L);
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(date);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH-mm-ss");
+        Date date = new Date(unixTime);
 
-        int hour = cal.get(Calendar.HOUR);
-        int min = cal.get(Calendar.MINUTE);
-        int sec = cal.get(Calendar.SECOND);
-
-        return hour+"-"+min+"-"+sec;
+        return simpleDateFormat.format(date);
     }
 }
