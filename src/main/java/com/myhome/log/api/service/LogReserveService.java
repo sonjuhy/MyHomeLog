@@ -1,18 +1,23 @@
-package com.myhome.log.db.repository;
+package com.myhome.log.api.service;
 
+import com.myhome.log.api.dto.LogDefaultDto;
 import com.myhome.log.db.entity.LogReserveEntity;
-import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.List;
 
-public interface LogReserveRepository extends MongoRepository<LogReserveEntity, Long> {
+public interface LogReserveService {
+    LogReserveEntity insert(LogDefaultDto dto);
+    List<LogReserveEntity> findAll();
     LogReserveEntity findById(long id);
     List<LogReserveEntity> findByType(boolean type);
     List<LogReserveEntity> findByDay(String day);
     List<LogReserveEntity> findByDayAndType(String day, boolean type);
+    List<LogReserveEntity> findByDayStartToEnd(String startDay, String endDay);
+    List<LogReserveEntity> findByDayStartToEndAndType(String startDay, String endDay, boolean type);
     List<LogReserveEntity> findBySender(String sender);
     List<LogReserveEntity> findBySenderAndDay(String sender, String day);
     List<LogReserveEntity> findBySenderAndDayAndType(String sender, String day, boolean type);
+    long count();
     long countByType(boolean type);
     long countByDay(String day);
     long countByDayAndType(String day, boolean type);

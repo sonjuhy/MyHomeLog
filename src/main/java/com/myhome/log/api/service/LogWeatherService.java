@@ -1,18 +1,23 @@
-package com.myhome.log.db.repository;
+package com.myhome.log.api.service;
 
+import com.myhome.log.api.dto.LogDefaultDto;
 import com.myhome.log.db.entity.LogWeatherEntity;
-import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.List;
 
-public interface LogWeatherRepository extends MongoRepository<LogWeatherEntity, Long> {
+public interface LogWeatherService {
+    LogWeatherEntity insert(LogDefaultDto dto);
+    List<LogWeatherEntity> findAll();
     LogWeatherEntity findById(long id);
     List<LogWeatherEntity> findByType(boolean type);
     List<LogWeatherEntity> findByDay(String day);
     List<LogWeatherEntity> findByDayAndType(String day, boolean type);
+    List<LogWeatherEntity> findByDayStartToEnd(String startDay, String endDay);
+    List<LogWeatherEntity> findByDayStartToEndAndType(String startDay, String endDay, boolean type);
     List<LogWeatherEntity> findBySender(String sender);
     List<LogWeatherEntity> findBySenderAndDay(String sender, String day);
     List<LogWeatherEntity> findBySenderAndDayAndType(String sender, String day, boolean type);
+    long count();
     long countByType(boolean type);
     long countByDay(String day);
     long countByDayAndType(String day, boolean type);
