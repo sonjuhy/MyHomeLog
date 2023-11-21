@@ -13,9 +13,12 @@ public interface LogReserveRepository extends MongoRepository<LogReserveEntity, 
     List<LogReserveEntity> findBySender(String sender);
     List<LogReserveEntity> findBySenderAndDay(String sender, String day);
     List<LogReserveEntity> findBySenderAndDayAndType(String sender, String day, boolean type);
-    List<LogReserveEntity> findByService(String service);
-    List<LogReserveEntity> findByServiceAndDay(String service, String day);
-    List<LogReserveEntity> findByServiceAndDayAndType(String service, String day, boolean type);
+    long countByType(boolean type);
+    long countByDay(String day);
+    long countByDayAndType(String day, boolean type);
+    long countBySender(String sender);
+    long countBySenderAndDay(String sender, String day);
+    long countBySenderAndDayAndType(String sender, String day, boolean type);
     void deleteById(long id);
     void deleteByDay(String day);
     void deleteBySender(String sender);

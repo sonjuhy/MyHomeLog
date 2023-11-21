@@ -13,9 +13,12 @@ public interface LogCloudCheckRepository extends MongoRepository<LogCloudCheckEn
     List<LogCloudCheckEntity> findBySender(String sender);
     List<LogCloudCheckEntity> findBySenderAndDay(String sender, String day);
     List<LogCloudCheckEntity> findBySenderAndDayAndType(String sender, String day, boolean type);
-    List<LogCloudCheckEntity> findByService(String service);
-    List<LogCloudCheckEntity> findByServiceAndDay(String service, String day);
-    List<LogCloudCheckEntity> findByServiceAndDayAndType(String service, String day, boolean type);
+    long countByType(boolean type);
+    long countByDay(String day);
+    long countByDayAndType(String day, boolean type);
+    long countBySender(String sender);
+    long countBySenderAndDay(String sender, String day);
+    long countBySenderAndDayAndType(String sender, String day, boolean type);
     void deleteById(long id);
     void deleteByDay(String day);
     void deleteBySender(String sender);

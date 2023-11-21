@@ -13,9 +13,12 @@ public interface LogCloudRepository extends MongoRepository<LogCloudEntity, Long
     List<LogCloudEntity> findBySender(String sender);
     List<LogCloudEntity> findBySenderAndDay(String sender, String day);
     List<LogCloudEntity> findBySenderAndDayAndType(String sender, String day, boolean type);
-    List<LogCloudEntity> findByService(String service);
-    List<LogCloudEntity> findByServiceAndDay(String service, String day);
-    List<LogCloudEntity> findByServiceAndDayAndType(String service, String day, boolean type);
+    long countByType(boolean type);
+    long countByDay(String day);
+    long countByDayAndType(String day, boolean type);
+    long countBySender(String sender);
+    long countBySenderAndDay(String sender, String day);
+    long countBySenderAndDayAndType(String sender, String day, boolean type);
     void deleteById(long id);
     void deleteByDay(String day);
     void deleteBySender(String sender);
