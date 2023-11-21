@@ -19,9 +19,9 @@ public class LogController {
     @Autowired
     LogDefaultService logDefaultService;
 
-    @GetMapping("/findById/{id}")
-    public ResponseEntity<LogDefaultEntity> findById(@PathVariable long id){
-        LogDefaultEntity entity = logDefaultService.findById(id);
+    @GetMapping("/findById/{service}/{id}")
+    public ResponseEntity<LogDefaultEntity> findById(@PathVariable String service, @PathVariable long id){
+        LogDefaultEntity entity = logDefaultService.findById(service, id);
         return new ResponseEntity<>(entity, HttpStatus.OK);
     }
 
@@ -31,11 +31,11 @@ public class LogController {
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
 
-    @GetMapping("/findByTypeCount")
-    public ResponseEntity<int[]> findByTypeCount(){
-        int trueCount = logDefaultService.findByType(true).size();
-        int falseCount = logDefaultService.findByType(false).size();
-        int[] result = {trueCount, falseCount};
+    @GetMapping("/countByType")
+    public ResponseEntity<long[]> findByTypeCount(){
+        long trueCount = logDefaultService.countByType(true);
+        long falseCount = logDefaultService.countByType(false);
+        long[] result = {trueCount, falseCount};
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
@@ -45,44 +45,76 @@ public class LogController {
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
 
-    @GetMapping("/findByDay/{day}/{type}")
+    @GetMapping("/countByDay/{day}")
+    public ResponseEntity<Long> countByDay(@PathVariable String day){
+        long count = logDefaultService.countByDay(day);
+        return new ResponseEntity<>(count, HttpStatus.OK);
+    }
+
+    @GetMapping("/findByDayAndType/{day}/{type}")
     public ResponseEntity<List<LogDefaultEntity>> findByDayAndType(@PathVariable String day, @PathVariable boolean type){
         List<LogDefaultEntity> list = logDefaultService.findByDayAndType(day, type);
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
 
-    @GetMapping("/findByDayCount/{day}")
-    public ResponseEntity<Integer> findByDayCount(@PathVariable String day){
-        int listSize = logDefaultService.findByDay(day).size();
-        return new ResponseEntity<>(listSize, HttpStatus.OK);
+    @GetMapping("/countByDayAndType/{day}")
+    public ResponseEntity<long[]> countByDayAndType(@PathVariable String day){
+        long[] result = new long[2];
+        result[0] = logDefaultService.countByDayAndType(day, true);
+        result[1] = logDefaultService.countByDayAndType(day, false);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @GetMapping("/findByDayStartToEnd/{startDay}/{endDay}")
+    @GetMapping("/findByStartToEnd/{startDay}/{endDay}")
     public ResponseEntity<List<LogDefaultEntity>> findByDayStartToEnd(@PathVariable String startDay, @PathVariable String endDay){
         return new ResponseEntity<>(logDefaultService.findByDayStartToEnd(startDay,endDay), HttpStatus.OK);
     }
 
-    @GetMapping("/findByDayStartToEnd/{startDay}/{endDay}/{type}")
+    @GetMapping("/countByStartToEnd/{startDay}/{endDay}")
+    public ResponseEntity<Long> countByStartToEnd(@PathVariable String startDay, @PathVariable String endDay){
+        return new ResponseEntity<>(logDefaultService.countByStartToEnd(startDay, endDay), HttpStatus.OK);
+    }
+
+    @GetMapping("/findByStartToEnd/{startDay}/{endDay}/{type}")
     public ResponseEntity<List<LogDefaultEntity>> findByDayStartToEnd(@PathVariable String startDay, @PathVariable String endDay, @PathVariable boolean type){
         return new ResponseEntity<>(logDefaultService.findByDayStartToEndAndType(startDay, endDay, type), HttpStatus.OK);
     }
 
+    @GetMapping("/countByStartToEnd/{startDay}/{endDay}/{type}")
+    public ResponseEntity<Long> countByStartToEnd(@PathVariable String startDay, @PathVariable String endDay, @PathVariable boolean type){
+        return new ResponseEntity<>(logDefaultService.countByStartToEndAndType(startDay, endDay, type), HttpStatus.OK);
+    }
     @GetMapping("/findBySender/{sender}")
     public ResponseEntity<List<LogDefaultEntity>> findBySender(@PathVariable String sender){
         List<LogDefaultEntity> list = logDefaultService.findBySender(sender);
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
 
-    @GetMapping("/findBySender/{sender}/{Day}")
+    @GetMapping("/countBySender/{sender}")
+    public ResponseEntity<Long> countBySender(@PathVariable String sender){
+        return new ResponseEntity<>(logDefaultService.countBySender(sender), HttpStatus.OK);
+    }
+
+    @GetMapping("/findBySenderAndDay/{sender}/{day}")
     public ResponseEntity<List<LogDefaultEntity>> findBySenderAndDay(@PathVariable String sender, @PathVariable String day){
         List<LogDefaultEntity> list = logDefaultService.findBySenderAndDay(sender, day);
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
 
-    @GetMapping("/findBySender/{sender}/{day}/{type}")
+    @GetMapping("/countBySenderAndDay/{sender}/{day}")
+    public ResponseEntity<Long> countBySenderAndDay(@PathVariable String sender, @PathVariable String day){
+        return new ResponseEntity<>(logDefaultService.countBySenderAndDay(sender, day), HttpStatus.OK);
+    }
+
+    @GetMapping("/findBySenderAndDayAndType/{sender}/{day}/{type}")
     public ResponseEntity<List<LogDefaultEntity>> findBySenderAndDayAndType(@PathVariable String sender, @PathVariable String day, @PathVariable boolean type){
         List<LogDefaultEntity> list = logDefaultService.findBySenderAndDayAndType(sender, day, type);
         return new ResponseEntity<>(list, HttpStatus.OK);
+    }
+
+    @GetMapping("/countBySenderAndDayAndType/{sender}/{day}/{type}")
+    public ResponseEntity<Long> countBySenderAndDayAndType(@PathVariable String sender, @PathVariable String day, @PathVariable boolean type){
+        return new ResponseEntity<>(logDefaultService.countBySenderAndDayAndType(sender, day, type), HttpStatus.OK);
     }
 
     @GetMapping("/findByService/{service}")
@@ -91,15 +123,29 @@ public class LogController {
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
 
-    @GetMapping("/findByService/{service}/{day}")
-    public ResponseEntity<List<LogDefaultEntity>> findByService(@PathVariable String service, @PathVariable String day){
+    @GetMapping("/countByService/{service}")
+    public ResponseEntity<Long> countByService(@PathVariable String service){
+        return new ResponseEntity<>(logDefaultService.countByService(service), HttpStatus.OK);
+    }
+
+    @GetMapping("/findByServiceAndDay/{service}/{day}")
+    public ResponseEntity<List<LogDefaultEntity>> findByServiceAndDay(@PathVariable String service, @PathVariable String day){
         List<LogDefaultEntity> list = logDefaultService.findByServiceAndDay(service, day);
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
 
-    @GetMapping("/findByService/{service}/{day}/{type}")
-    public ResponseEntity<List<LogDefaultEntity>> findByService(@PathVariable String service, @PathVariable String day, @PathVariable boolean type){
+    @GetMapping("/countByServiceAndDay/{service}/{day}")
+    public ResponseEntity<Long> countByServiceAndDay(@PathVariable String service, @PathVariable String day){
+        return new ResponseEntity<>(logDefaultService.countByServiceAndDay(service, day), HttpStatus.OK);
+    }
+
+    @GetMapping("/findByServiceAndDayAndType/{service}/{day}/{type}")
+    public ResponseEntity<List<LogDefaultEntity>> findByServiceAndDayAndType(@PathVariable String service, @PathVariable String day, @PathVariable boolean type){
         List<LogDefaultEntity> list = logDefaultService.findByServiceAndDayAndType(service, day, type);
         return new ResponseEntity<>(list, HttpStatus.OK);
+    }
+    @GetMapping("/countByServiceAndDayAndType/{service}/{day}/{type}")
+    public ResponseEntity<Long> countByServiceAndDayAndType(@PathVariable String service, @PathVariable String day, @PathVariable boolean type){
+        return new ResponseEntity<>(logDefaultService.countBySenderAndDayAndType(service, day, type), HttpStatus.OK);
     }
 }
