@@ -19,6 +19,14 @@ public class LogController {
     @Autowired
     LogDefaultService logDefaultService;
 
+    /**
+     * find : all, type, day, limit(page)
+     * count : all, type, day
+     *
+     * session : default, sender, service
+     * */
+
+    // default
     @GetMapping("/findById/{service}/{id}")
     public ResponseEntity<LogDefaultEntity> findById(@PathVariable String service, @PathVariable long id){
         LogDefaultEntity entity = logDefaultService.findById(service, id);
@@ -67,7 +75,7 @@ public class LogController {
 
     @GetMapping("/findByStartToEnd/{startDay}/{endDay}")
     public ResponseEntity<List<LogDefaultEntity>> findByDayStartToEnd(@PathVariable String startDay, @PathVariable String endDay){
-        return new ResponseEntity<>(logDefaultService.findByDayStartToEnd(startDay,endDay), HttpStatus.OK);
+        return new ResponseEntity<>(logDefaultService.findByDayBetween(startDay,endDay), HttpStatus.OK);
     }
 
     @GetMapping("/countByStartToEnd/{startDay}/{endDay}")
@@ -77,13 +85,15 @@ public class LogController {
 
     @GetMapping("/findByStartToEnd/{startDay}/{endDay}/{type}")
     public ResponseEntity<List<LogDefaultEntity>> findByDayStartToEnd(@PathVariable String startDay, @PathVariable String endDay, @PathVariable boolean type){
-        return new ResponseEntity<>(logDefaultService.findByDayStartToEndAndType(startDay, endDay, type), HttpStatus.OK);
+        return new ResponseEntity<>(logDefaultService.findByTypeBetween(type, startDay, endDay), HttpStatus.OK);
     }
 
     @GetMapping("/countByStartToEnd/{startDay}/{endDay}/{type}")
     public ResponseEntity<Long> countByStartToEnd(@PathVariable String startDay, @PathVariable String endDay, @PathVariable boolean type){
         return new ResponseEntity<>(logDefaultService.countByStartToEndAndType(startDay, endDay, type), HttpStatus.OK);
     }
+
+    // sender
     @GetMapping("/findBySender/{sender}")
     public ResponseEntity<List<LogDefaultEntity>> findBySender(@PathVariable String sender){
         List<LogDefaultEntity> list = logDefaultService.findBySender(sender);
@@ -117,9 +127,22 @@ public class LogController {
         return new ResponseEntity<>(logDefaultService.countBySenderAndDayAndType(sender, day, type), HttpStatus.OK);
     }
 
+    // service
     @GetMapping("/findByService/{service}")
     public ResponseEntity<List<LogDefaultEntity>> findByService(@PathVariable String service){
         List<LogDefaultEntity> list = logDefaultService.findByService(service);
+        return new ResponseEntity<>(list, HttpStatus.OK);
+    }
+
+    @GetMapping("/findByServicePage/{service}/{page}/{pageSize}")
+    public ResponseEntity<List<LogDefaultEntity>> findByServicePage(@PathVariable String service, @PathVariable int page, @PathVariable int pageSize){
+        List<LogDefaultEntity> list = logDefaultService.findByServiceLimit(service, page, pageSize);
+        return new ResponseEntity<>(list, HttpStatus.OK);
+    }
+
+    @GetMapping("/findByServicePageReverse/{service}/{page}/{pageSize}")
+    public ResponseEntity<List<LogDefaultEntity>> findByServicePageReverse(@PathVariable String service, @PathVariable int page, @PathVariable int pageSize) {
+        List<LogDefaultEntity> list = logDefaultService.findByServiceLimitReverse(service, page, pageSize);
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
 
@@ -128,9 +151,50 @@ public class LogController {
         return new ResponseEntity<>(logDefaultService.countByService(service), HttpStatus.OK);
     }
 
+    @GetMapping("/findByServiceAndType/{service}/{type}")
+    public ResponseEntity<List<LogDefaultEntity>> findByServiceAndType(@PathVariable String service, @PathVariable boolean type){
+        List<LogDefaultEntity> list = logDefaultService.findByServiceAndType(service, type);
+        return new ResponseEntity<>(list, HttpStatus.OK);
+    }
+
+    @GetMapping("/findByServiceAndTypeReverse/{service}/{type}")
+    public ResponseEntity<List<LogDefaultEntity>> findByServiceAndTypeReverse(@PathVariable String service, @PathVariable boolean type){
+        List<LogDefaultEntity> list = logDefaultService.findByServiceAndTypeReverse(service, type);
+        return new ResponseEntity<>(list, HttpStatus.OK);
+    }
+
+    @GetMapping("/findByServiceAndTypePage/{service}/{type}/{page}/{pageSize}")
+    public ResponseEntity<List<LogDefaultEntity>> findByServiceAndTypePage(@PathVariable String service, @PathVariable boolean type, @PathVariable int page, @PathVariable int pageSize){
+        List<LogDefaultEntity> list = logDefaultService.findByServiceAndTypeLimit(service, type, page, pageSize);
+        return new ResponseEntity<>(list, HttpStatus.OK);
+    }
+
+    @GetMapping("/countByServiceAndType/{service}/{type}")
+    public ResponseEntity<Long> countByServiceAndType(@PathVariable String service, @PathVariable boolean type){
+        return new ResponseEntity<>(logDefaultService.countByServiceAndType(service, type), HttpStatus.OK);
+    }
+
     @GetMapping("/findByServiceAndDay/{service}/{day}")
     public ResponseEntity<List<LogDefaultEntity>> findByServiceAndDay(@PathVariable String service, @PathVariable String day){
         List<LogDefaultEntity> list = logDefaultService.findByServiceAndDay(service, day);
+        return new ResponseEntity<>(list, HttpStatus.OK);
+    }
+
+    @GetMapping("/findByServiceAndDayReverse/{service}/{day}")
+    public ResponseEntity<List<LogDefaultEntity>> findByServiceAndDayReverse(@PathVariable String service, @PathVariable String day){
+        List<LogDefaultEntity> list = logDefaultService.findByServiceAndDayReverse(service, day);
+        return new ResponseEntity<>(list, HttpStatus.OK);
+    }
+
+    @GetMapping("/findByServiceAndDayPage/{service}/{day}/{page}/{pageSize}")
+    public ResponseEntity<List<LogDefaultEntity>> findByServiceAndDayPage(@PathVariable String service, @PathVariable String day, @PathVariable int page, @PathVariable int pageSize){
+        List<LogDefaultEntity> list = logDefaultService.findByServiceAndDayLimit(service, day, page, pageSize);
+        return new ResponseEntity<>(list, HttpStatus.OK);
+    }
+
+    @GetMapping("/findByServiceAndDayPageReverse/{service}/{day}/{page}/{pageSize}")
+    public ResponseEntity<List<LogDefaultEntity>> findByServiceAndDayPageReverse(@PathVariable String service, @PathVariable String day, @PathVariable int page, @PathVariable int pageSize){
+        List<LogDefaultEntity> list = logDefaultService.findByServiceAndDayLimitReverse(service, day, page, pageSize);
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
 
@@ -144,8 +208,68 @@ public class LogController {
         List<LogDefaultEntity> list = logDefaultService.findByServiceAndDayAndType(service, day, type);
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
+
+    @GetMapping("/findByServiceAndDayAndTypePage/{service}/{day}/{type}/{page}/{pageSize}")
+    public ResponseEntity<List<LogDefaultEntity>> findByServiceAndDayAndTypePage(@PathVariable String service, @PathVariable String day, @PathVariable boolean type, @PathVariable int page, @PathVariable int pageSize){
+        List<LogDefaultEntity> list = logDefaultService.findByServiceAndDayAndTypeLimit(service, day, type, page, pageSize);
+        return new ResponseEntity<>(list, HttpStatus.OK);
+    }
+
     @GetMapping("/countByServiceAndDayAndType/{service}/{day}/{type}")
     public ResponseEntity<Long> countByServiceAndDayAndType(@PathVariable String service, @PathVariable String day, @PathVariable boolean type){
-        return new ResponseEntity<>(logDefaultService.countBySenderAndDayAndType(service, day, type), HttpStatus.OK);
+        return new ResponseEntity<>(logDefaultService.countByServiceAndDayAndType(service, day, type), HttpStatus.OK);
+    }
+
+    @GetMapping("/findByServiceAndStartToEndDayAndType/{service}/{start}/{end}")
+    public ResponseEntity<List<LogDefaultEntity>> findByServiceAndStartToEndDay(@PathVariable String service, @PathVariable String start, @PathVariable String end){
+        List<LogDefaultEntity> list = logDefaultService.findByServiceBetween(service, start, end);
+        return new ResponseEntity<>(list, HttpStatus.OK);
+    }
+
+    @GetMapping("/findByServiceAndStartToEndDayAndType/{service}/{start}/{end}/{type}")
+    public ResponseEntity<List<LogDefaultEntity>> findByServiceAndStartToEndDayAndType(@PathVariable String service, @PathVariable String start, @PathVariable String end, @PathVariable boolean type){
+        List<LogDefaultEntity> list = logDefaultService.findByServiceAndTypeBetween(service, type, start, end);
+        return new ResponseEntity<>(list, HttpStatus.OK);
+    }
+
+    @GetMapping("/findByServiceAndStartToEndDayPage/{service}/{start}/{end}/{page}/{pageSize}")
+    public ResponseEntity<List<LogDefaultEntity>> findByServiceAndStartToEndDayPage(@PathVariable String service, @PathVariable String start, @PathVariable String end, @PathVariable int page, @PathVariable int pageSize){
+        List<LogDefaultEntity> list = logDefaultService.findByServiceBetweenLimit(service, start, end, page, pageSize);
+        return new ResponseEntity<>(list, HttpStatus.OK);
+    }
+
+    @GetMapping("/findByServiceAndStartToEndDayAndTypePage/{service}/{start}/{end}/{type}/{page}/{pageSize}")
+    public ResponseEntity<List<LogDefaultEntity>> findByServiceAndStartToEndDayAndTypePage(@PathVariable String service, @PathVariable String start, @PathVariable String end, @PathVariable boolean type, @PathVariable int page, @PathVariable int pageSize){
+        List<LogDefaultEntity> list = logDefaultService.findByServiceAndTypeBetweenLimit(service, type, start, end, page, pageSize);
+        return new ResponseEntity<>(list, HttpStatus.OK);
+    }
+
+    @GetMapping("/findByServiceAndStartToEndDayReverse/{service}/{start}/{end}")
+    public ResponseEntity<List<LogDefaultEntity>> findByServiceAndStartToEndDayReverse(@PathVariable String service, @PathVariable String start, @PathVariable String end){
+        List<LogDefaultEntity> list = logDefaultService.findByServiceBetweenReverse(service, start, end);
+        return new ResponseEntity<>(list, HttpStatus.OK);
+    }
+
+    @GetMapping("/findByServiceAndStartToEndDayPageReverse/{service}/{start}/{end}/{page}/{pageSize}")
+    public ResponseEntity<List<LogDefaultEntity>> findByServiceAndStartToEndDayPageReverse(@PathVariable String service, @PathVariable String start, @PathVariable String end, @PathVariable int page, @PathVariable int pageSize){
+        List<LogDefaultEntity> list = logDefaultService.findBySenderBetweenLimitReverse(service, start, end, page, pageSize);
+        return new ResponseEntity<>(list, HttpStatus.OK);
+    }
+
+    @GetMapping("/findByServiceAndStartToEndDayAndTypeReverse/{service}/{start}/{end}/{type}")
+    public ResponseEntity<List<LogDefaultEntity>> findByServiceAndStartToEndDayAndTypeReverse(@PathVariable String service, @PathVariable String start, @PathVariable String end, @PathVariable boolean type){
+        List<LogDefaultEntity> list = logDefaultService.findByServiceAndTypeBetweenReverse(service, type, start, end);
+        return new ResponseEntity<>(list, HttpStatus.OK);
+    }
+
+    @GetMapping("/findByServiceAndStartToEndDayAndTypePageReverse/{service}/{start}/{end}/{type}/{page}/{pageSize}")
+    public ResponseEntity<List<LogDefaultEntity>> findByServiceAndStartToEndDayAndTypePageReverse(@PathVariable String service, @PathVariable String start, @PathVariable String end, @PathVariable boolean type, @PathVariable int page, @PathVariable int pageSize){
+        List<LogDefaultEntity> list = logDefaultService.findByServiceAndTypeBetweenLimitReverse(service, type, start, end, page, pageSize);
+        return new ResponseEntity<>(list, HttpStatus.OK);
+    }
+
+    @GetMapping("/countByServiceAndStartToEndDayAndTypeReverse/{service}/{start}/{end}/{type}")
+    public ResponseEntity<Long> countByServiceAndStartToEndDayAndType(@PathVariable String service, @PathVariable String start, @PathVariable String end, @PathVariable boolean type){
+        return new ResponseEntity<>(logDefaultService.countByServiceAndStartToEndDayAndType(service, start, end, type), HttpStatus.OK);
     }
 }

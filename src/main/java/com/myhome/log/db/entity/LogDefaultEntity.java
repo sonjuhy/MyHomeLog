@@ -1,15 +1,14 @@
 package com.myhome.log.db.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 @Getter
 @Setter
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Document(collection = "default_log")
@@ -20,7 +19,8 @@ public class LogDefaultEntity {
 
     @Id
     private long id;
-    private long unix_time;
+    @Field("unix_time")
+    private long unixTime;
     private boolean type; // error(false), success(true)
     private String sender; // spring, django
     private String service; // light(iot), reserve(iot), cloud, fileCheck(cloud)

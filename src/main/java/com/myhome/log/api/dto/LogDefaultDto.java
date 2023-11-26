@@ -1,13 +1,11 @@
 package com.myhome.log.api.dto;
 
 import com.myhome.log.db.entity.LogDefaultEntity;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 public class LogDefaultDto {
@@ -25,6 +23,7 @@ public class LogDefaultDto {
     }
     public void receiveToDefault(LogReceiveDto dto){
         this.id = dto.getId();
+        this.type = dto.isType();
         this.content = dto.getContent();
         this.service = dto.getService();
         this.sender = dto.getSender();
